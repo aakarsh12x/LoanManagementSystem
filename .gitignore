@@ -6,10 +6,11 @@ dist/
 .next/
 out/
 
-# Environment variables
+# Environment variables — ignore actual secrets, keep examples
 .env
 .env.local
 .env.*.local
+!.env.example
 
 # Uploads (user files)
 backend/uploads/*
