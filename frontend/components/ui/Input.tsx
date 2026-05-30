@@ -12,14 +12,14 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     const inputId = id || label.toLowerCase().replace(/\s+/g, '-');
     return (
       <div className="flex flex-col gap-1">
-        <label htmlFor={inputId} className="text-sm font-medium text-gray-700">
+        <label htmlFor={inputId} className="text-sm font-medium text-neutral-300">
           {label}
         </label>
         <input
           ref={ref}
           id={inputId}
-          className={`rounded-md border px-3 py-2 text-sm outline-none transition-colors placeholder:text-gray-400
-            ${error ? 'border-red-400 focus:ring-2 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200'}
+          className={`rounded-xl bg-white/5 border border-white/10 px-4 py-2.5 text-sm text-white placeholder:text-neutral-500 outline-none focus:border-emerald-500/50 focus:ring-2 focus:ring-emerald-500/20 transition-all
+            ${error ? 'border-rose-500 focus:ring-rose-500/20' : ''}
             ${className}`}
           {...props}
         />

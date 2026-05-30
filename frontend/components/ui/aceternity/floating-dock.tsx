@@ -33,9 +33,9 @@ export function FloatingDock({
       onMouseMove={(e) => mouseX.set(e.pageX)}
       onMouseLeave={() => mouseX.set(Infinity)}
       className={cn(
-        'flex h-14 items-end gap-2 rounded-2xl',
+        'flex h-14 items-center gap-2 rounded-2xl',
         'bg-white/5 backdrop-blur-md border border-white/10',
-        'px-4 pb-2',
+        'px-4',
         className,
       )}
     >
@@ -66,8 +66,8 @@ function DockIcon({
     return val - bounds.x - bounds.width / 2;
   });
 
-  const sizeTransform = useTransform(distance, [-150, 0, 150], [36, 62, 36]);
-  const iconSizeTransform = useTransform(distance, [-150, 0, 150], [18, 30, 18]);
+  const sizeTransform = useTransform(distance, [-150, 0, 150], [38, 48, 38]);
+  const iconSizeTransform = useTransform(distance, [-150, 0, 150], [19, 24, 19]);
 
   const size = useSpring(sizeTransform, { mass: 0.1, stiffness: 180, damping: 14 });
   const iconSize = useSpring(iconSizeTransform, { mass: 0.1, stiffness: 180, damping: 14 });
@@ -91,11 +91,11 @@ function DockIcon({
         <AnimatePresence>
           {hovered && (
             <motion.div
-              initial={{ opacity: 0, y: 6, x: '-50%' }}
+              initial={{ opacity: 0, y: -6, x: '-50%' }}
               animate={{ opacity: 1, y: 0, x: '-50%' }}
-              exit={{ opacity: 0, y: 2, x: '-50%' }}
+              exit={{ opacity: 0, y: -2, x: '-50%' }}
               transition={{ duration: 0.15 }}
-              className="absolute -top-9 left-1/2 z-50 whitespace-nowrap rounded-lg border border-white/10 bg-neutral-900 px-2.5 py-1 text-xs font-medium text-white shadow-lg"
+              className="absolute top-14 left-1/2 z-50 whitespace-nowrap rounded-lg border border-white/10 bg-neutral-900 px-2.5 py-1 text-xs font-medium text-white shadow-lg"
             >
               {title}
             </motion.div>

@@ -24,12 +24,12 @@ function Explosion({ x, y }: { x: number; y: number }) {
         initial={{ opacity: 0 }}
         animate={{ opacity: [0, 1, 0] }}
         transition={{ duration: 1.2, ease: 'easeOut' }}
-        className="absolute -inset-x-8 top-0 mx-auto h-1 w-16 rounded-full bg-gradient-to-r from-transparent via-indigo-400 to-transparent blur-sm"
+        className="absolute -inset-x-8 top-0 mx-auto h-1 w-16 rounded-full bg-gradient-to-r from-transparent via-emerald-400 to-transparent blur-sm"
       />
       {sparks.map((s) => (
         <motion.span
           key={s.id}
-          className="absolute h-1 w-1 rounded-full bg-gradient-to-b from-indigo-400 to-cyan-500"
+          className="absolute h-1 w-1 rounded-full bg-gradient-to-b from-emerald-400 to-cyan-500"
           initial={{ x: 0, y: 0, opacity: 1 }}
           animate={{ x: s.dx, y: s.dy, opacity: 0 }}
           transition={{ duration: randomBetween(8, 16) * 0.1, ease: 'easeOut' }}
@@ -120,11 +120,11 @@ function Beam({
 const BEAMS = [
   { xOffset: 80,   duration: 7,  delay: 0,   height: 'h-16', color: '#38bdf8' },
   { xOffset: 200,  duration: 5,  delay: 1.5, height: 'h-10', color: '#0ea5e9' },
-  { xOffset: 380,  duration: 9,  delay: 0.5, height: 'h-20', color: '#6366f1' },
+  { xOffset: 380,  duration: 9,  delay: 0.5, height: 'h-20', color: '#10b981' },
   { xOffset: 550,  duration: 6,  delay: 2,   height: 'h-12', color: '#2dd4bf' },
   { xOffset: 720,  duration: 8,  delay: 0,   height: 'h-14', color: '#38bdf8' },
   { xOffset: 900,  duration: 5,  delay: 3,   height: 'h-8',  color: '#0ea5e9' },
-  { xOffset: 1050, duration: 10, delay: 1,   height: 'h-20', color: '#6366f1' },
+  { xOffset: 1050, duration: 10, delay: 1,   height: 'h-20', color: '#2dd4bf' },
   { xOffset: 1200, duration: 6,  delay: 2.5, height: 'h-12', color: '#2dd4bf' },
 ];
 
@@ -147,7 +147,7 @@ export function BackgroundBeamsWithCollision({
       )}
     >
       {/* Radial glow at center */}
-      <div className="pointer-events-none absolute inset-0 z-0 [background:radial-gradient(ellipse_60%_50%_at_50%_0%,rgba(99,102,241,0.15),transparent)]" />
+      <div className="pointer-events-none absolute inset-0 z-0 [background:radial-gradient(ellipse_60%_50%_at_50%_0%,rgba(16,185,129,0.08),transparent)]" />
 
       {BEAMS.map((b, i) => (
         <Beam
@@ -163,7 +163,7 @@ export function BackgroundBeamsWithCollision({
       {/* Collision target — thin line at bottom */}
       <div
         ref={containerRef}
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-indigo-500/30 to-transparent"
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-emerald-500/30 to-transparent"
       />
     </div>
   );

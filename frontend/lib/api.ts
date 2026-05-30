@@ -68,6 +68,8 @@ export const borrowerApi = {
 export const dashboardApi = {
   getSales: () =>
     request<{ users: import('../types').User[]; total: number }>('/api/dashboard/sales'),
+  createBorrower: (body: { fullName: string; email: string; password?: string }) =>
+    request<{ message: string; user: import('../types').User }>('/api/dashboard/sales', { method: 'POST', body }),
   getSanction: () =>
     request<{ loans: import('../types').LoanApplication[]; total: number }>('/api/dashboard/sanction'),
   sanctionAction: (id: string, body: { action: 'approve' | 'reject'; rejectionReason?: string }) =>

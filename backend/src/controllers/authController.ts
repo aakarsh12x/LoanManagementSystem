@@ -30,7 +30,7 @@ export const signup = async (req: Request, res: Response, next: NextFunction): P
     const token = jwt.sign(
       { userId: user._id.toString(), role: user.role },
       process.env.JWT_SECRET!,
-      { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
+      { expiresIn: (process.env.JWT_EXPIRES_IN || '7d') as any }
     );
 
     res.status(201).json({
@@ -66,7 +66,7 @@ export const login = async (req: Request, res: Response, next: NextFunction): Pr
     const token = jwt.sign(
       { userId: user._id.toString(), role: user.role },
       process.env.JWT_SECRET!,
-      { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
+      { expiresIn: (process.env.JWT_EXPIRES_IN || '7d') as any }
     );
 
     res.json({

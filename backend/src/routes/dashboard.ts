@@ -9,6 +9,7 @@ import {
   getCollectionData,
   recordPayment,
   getLoanPayments,
+  createBorrower,
 } from '../controllers/dashboardController';
 
 const router = Router();
@@ -18,6 +19,7 @@ router.use(authenticate);
 
 // Sales module — accessible by admin and sales
 router.get('/sales', authorize('admin', 'sales'), getSalesData);
+router.post('/sales', authorize('admin', 'sales'), createBorrower);
 
 // Sanction module — accessible by admin and sanction
 router.get('/sanction', authorize('admin', 'sanction'), getSanctionData);

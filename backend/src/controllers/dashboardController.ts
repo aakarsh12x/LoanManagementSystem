@@ -3,6 +3,8 @@ import { AuthRequest } from '../middleware/auth';
 import { User } from '../models/User';
 import { LoanApplication } from '../models/LoanApplication';
 import { Payment } from '../models/Payment';
+import bcrypt from 'bcrypt';
+import { UserRole } from '../types';
 
 // SALES: users who registered but have not applied yet
 export const getSalesData = async (_req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
@@ -184,5 +186,38 @@ export const getLoanPayments = async (req: AuthRequest, res: Response, next: Nex
     const { id } = req.params;
     const payments = await Payment.find({ loanId: id }).sort({ paymentDate: 1 }).lean();
     res.json({ payments });
+  } catch (err) { next(err); }
+};
+
+// CREATE SINGLE BORROWER
+export const createBorrower = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const { fullName, email, password } = req.body;
+
+    if (!fullName?.trim() || !email?.trim()) {
+      res.status(400).json({ message: 'Full name and email are required' });
+      return;
+    }
+
+    const existing = await User.findOne({ email: email.toLowerCase().trim() });
+    if (existing) {
+      res.status(409).json({ message: 'Email is already registered' });
+      return;
+    }
+
+    const pwd = password || 'Borrower@123';
+    const hashed = await bcrypt.hash(pwd, 10);
+
+    const user = await User.create({
+      fullName: fullName.trim(),
+      email: email.toLowerCase().trim(),
+      password: hashed,
+      role: 'borrower' as UserRole,
+    });
+
+    res.status(201).json({
+      message: 'Borrower created successfully',
+      user: { id: user._id, fullName: user.fullName, email: user.email, role: user.role }
+    });
   } catch (err) { next(err); }
 };

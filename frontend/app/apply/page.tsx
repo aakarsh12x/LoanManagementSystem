@@ -9,6 +9,8 @@ import { Select } from '../../components/ui/Select';
 import { Button } from '../../components/ui/Button';
 import { StatusBadge } from '../../components/ui/StatusBadge';
 import { NumberTicker } from '../../components/ui/magic/number-ticker';
+import { BackgroundBeamsWithCollision } from '../../components/ui/aceternity/background-beams-collision';
+import { BorderBeam } from '../../components/ui/magic/border-beam';
 import { LoanApplication, EmploymentMode } from '../../types';
 
 type Step = 1 | 2 | 3 | 4;
@@ -69,6 +71,30 @@ export default function ApplyPage() {
       if (loan) setExistingApp(loan);
     }).catch(() => {}).finally(() => setPageLoading(false));
   }, [user]);
+
+  // Poll for application status updates
+  useEffect(() => {
+    if (!existingApp) return;
+    // Don't poll if final state is reached
+    if (existingApp.status === 'CLOSED' || existingApp.status === 'REJECTED') return;
+
+    const interval = setInterval(() => {
+      borrowerApi.getMyApplication().then(({ loan }) => {
+        if (loan) {
+          // Update state if status, repayment details, or payments have changed
+          if (
+            loan.status !== existingApp.status ||
+            loan.totalPaid !== existingApp.totalPaid ||
+            loan.rejectionReason !== existingApp.rejectionReason
+          ) {
+            setExistingApp(loan);
+          }
+        }
+      }).catch(() => {});
+    }, 3000); // Poll every 3 seconds for fast feedback during evaluation!
+
+    return () => clearInterval(interval);
+  }, [existingApp]);
 
   // Live interest preview
   useEffect(() => {
@@ -156,19 +182,27 @@ export default function ApplyPage() {
   if (existingApp) {
     const borrower = existingApp.borrowerId as { fullName?: string; email?: string } | string;
     return (
-      <div className="min-h-screen bg-gray-50">
-        <nav className="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between">
-          <span className="font-semibold text-gray-900">LMS Borrower Portal</span>
-          <div className="flex items-center gap-3">
-            <span className="text-sm text-gray-500">{user?.fullName}</span>
-            <button onClick={handleLogout} className="text-sm text-gray-500 hover:text-red-600">Logout</button>
+      <BackgroundBeamsWithCollision className="flex flex-col min-h-screen text-white">
+        <header className="sticky top-0 z-40 w-full border-b border-white/10 bg-neutral-950/80 backdrop-blur-xl">
+          <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
+            <span className="font-semibold text-emerald-400 tracking-wide">LMS Borrower Portal</span>
+            <div className="flex items-center gap-4">
+              <span className="text-sm text-neutral-300 font-medium">{user?.fullName}</span>
+              <button
+                onClick={handleLogout}
+                className="text-sm text-neutral-400 hover:text-rose-400 transition-colors font-medium animate-pulse hover:animate-none"
+              >
+                Logout
+              </button>
+            </div>
           </div>
-        </nav>
+        </header>
 
-        <div className="max-w-2xl mx-auto px-4 py-12">
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-8">
-            <div className="flex items-center justify-between mb-6">
-              <h1 className="text-xl font-bold text-gray-900">Your Loan Application</h1>
+        <div className="flex-1 flex items-center justify-center p-6 z-10">
+          <div className="relative w-full max-w-2xl bg-neutral-900/60 border border-white/10 p-8 rounded-2xl shadow-2xl overflow-hidden backdrop-blur-xl">
+            <BorderBeam />
+            <div className="flex items-center justify-between mb-8 pb-4 border-b border-white/5">
+              <h1 className="text-2xl font-bold text-white tracking-tight">Your Loan Application</h1>
               <StatusBadge status={existingApp.status} />
             </div>
 
@@ -183,22 +217,36 @@ export default function ApplyPage() {
                 ['Outstanding', formatCurrency(Math.max(0, existingApp.totalRepayment - existingApp.totalPaid))],
                 ['Applied On', new Date(existingApp.createdAt).toLocaleDateString('en-IN')],
               ].map(([k, v]) => (
-                <div key={k} className="bg-gray-50 rounded-lg p-3">
-                  <dt className="text-gray-500 text-xs">{k}</dt>
-                  <dd className="font-semibold text-gray-900 mt-0.5">{v}</dd>
+                <div key={k} className="bg-white/5 rounded-xl border border-white/5 p-4 hover:bg-white/10 transition-colors">
+                  <dt className="text-neutral-400 text-xs font-semibold uppercase tracking-wider">{k}</dt>
+                  <dd className="font-bold text-white text-lg mt-1.5" suppressHydrationWarning>{v}</dd>
                 </div>
               ))}
             </dl>
 
             {existingApp.status === 'REJECTED' && existingApp.rejectionReason && (
-              <div className="mt-4 rounded-md bg-red-50 border border-red-200 p-3">
-                <p className="text-sm font-medium text-red-700">Rejection Reason</p>
-                <p className="text-sm text-red-600 mt-1">{existingApp.rejectionReason}</p>
+              <div className="mt-6 rounded-xl bg-rose-500/10 border border-rose-500/20 p-4">
+                <p className="text-sm font-semibold text-rose-400">Rejection Reason</p>
+                <p className="text-sm text-rose-300 mt-1">{existingApp.rejectionReason}</p>
+              </div>
+            )}
+
+            {(existingApp.status === 'REJECTED' || existingApp.status === 'CLOSED') && (
+              <div className="mt-8 border-t border-white/10 pt-6">
+                <Button
+                  onClick={() => {
+                    setExistingApp(null);
+                    setStep(2); // Go to profile step to check/update profile details
+                  }}
+                  className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-3 rounded-xl shadow-lg shadow-emerald-600/20 transition-all"
+                >
+                  Start New Application
+                </Button>
               </div>
             )}
           </div>
         </div>
-      </div>
+      </BackgroundBeamsWithCollision>
     );
   }
 
@@ -210,194 +258,220 @@ export default function ApplyPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <nav className="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between">
-        <span className="font-semibold text-gray-900">LMS Borrower Portal</span>
-        <div className="flex items-center gap-3">
-          <span className="text-sm text-gray-500">{user?.fullName}</span>
-          <button onClick={handleLogout} className="text-sm text-gray-500 hover:text-red-600">Logout</button>
+    <BackgroundBeamsWithCollision className="flex flex-col min-h-screen text-white">
+      <header className="sticky top-0 z-40 w-full border-b border-white/10 bg-neutral-950/80 backdrop-blur-xl">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
+          <span className="font-semibold text-emerald-400 tracking-wide">LMS Borrower Portal</span>
+          <div className="flex items-center gap-4">
+            <span className="text-sm text-neutral-300 font-medium">{user?.fullName}</span>
+            <button
+              onClick={handleLogout}
+              className="text-sm text-neutral-400 hover:text-rose-400 transition-colors font-medium animate-pulse hover:animate-none"
+            >
+              Logout
+            </button>
+          </div>
         </div>
-      </nav>
+      </header>
 
-      <div className="max-w-xl mx-auto px-4 py-10">
-        {/* Step indicator */}
-        <div className="flex items-center mb-8 gap-0">
-          {steps.map((s, idx) => (
-            <div key={s.n} className="flex items-center flex-1">
-              <div className={`flex flex-col items-center ${idx < steps.length - 1 ? 'flex-1' : ''}`}>
-                <div className={`h-8 w-8 rounded-full flex items-center justify-center text-sm font-semibold transition-colors
-                  ${step === s.n ? 'bg-emerald-600 text-white' : step > s.n ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-500'}`}>
-                  {step > s.n ? '✓' : s.n}
+      <div className="flex-1 flex flex-col items-center justify-center p-6 z-10">
+        <div className="w-full max-w-xl">
+          {/* Step indicator */}
+          <div className="flex items-center mb-8 gap-0">
+            {steps.map((s, idx) => (
+              <div key={s.n} className="flex items-center flex-1">
+                <div className={`flex flex-col items-center ${idx < steps.length - 1 ? 'flex-1' : ''}`}>
+                  <div className={`h-9 w-9 rounded-full flex items-center justify-center text-sm font-semibold transition-all border
+                    ${step === s.n
+                      ? 'bg-emerald-500 text-neutral-950 font-bold border-emerald-400 ring-4 ring-emerald-500/20'
+                      : step > s.n
+                        ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400'
+                        : 'bg-neutral-900 border-white/10 text-neutral-500'}`}>
+                    {step > s.n ? '✓' : s.n}
+                  </div>
+                  <span className={`text-xs mt-1.5 font-medium ${step === s.n ? 'text-emerald-400' : 'text-neutral-500'}`}>{s.label}</span>
                 </div>
-                <span className="text-xs text-gray-500 mt-1">{s.label}</span>
-              </div>
-              {idx < steps.length - 1 && (
-                <div className={`h-0.5 flex-1 mb-4 transition-colors ${step > s.n ? 'bg-green-500' : 'bg-gray-200'}`} />
-              )}
-            </div>
-          ))}
-        </div>
-
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-8">
-
-          {/* Step 1: Account (already done via signup, just show and proceed) */}
-          {step === 1 && (
-            <div>
-              <h2 className="text-xl font-bold text-gray-900 mb-2">Account Created</h2>
-              <p className="text-sm text-gray-500 mb-6">You&apos;re logged in as <strong>{user?.email}</strong>. Let&apos;s complete your profile.</p>
-              <Button onClick={() => setStep(2)} size="lg" className="w-full">
-                Continue to Profile →
-              </Button>
-            </div>
-          )}
-
-          {/* Step 2: Personal Details */}
-          {step === 2 && (
-            <form onSubmit={handleProfileSave} className="flex flex-col gap-4">
-              <h2 className="text-xl font-bold text-gray-900 mb-1">Personal Details</h2>
-              {error && <div className="rounded-md bg-red-50 border border-red-200 p-3 text-sm text-red-700">{error}</div>}
-              <Input label="Full Name" value={fullName} onChange={(e) => setFullName(e.target.value)} required />
-              <Input label="PAN" value={pan} onChange={(e) => setPan(e.target.value.toUpperCase())} placeholder="ABCDE1234F" required maxLength={10} />
-              <Input label="Date of Birth" type="date" value={dob} onChange={(e) => setDob(e.target.value)} required />
-              <Input label="Monthly Salary (₹)" type="number" value={monthlySalary} onChange={(e) => setMonthlySalary(e.target.value)} min={0} required />
-              <Select
-                label="Employment Mode"
-                value={employmentMode}
-                onChange={(e) => setEmploymentMode(e.target.value as EmploymentMode)}
-                options={[
-                  { value: 'Salaried', label: 'Salaried' },
-                  { value: 'Self-Employed', label: 'Self-Employed' },
-                  { value: 'Unemployed', label: 'Unemployed' },
-                ]}
-                required
-              />
-              <div className="flex gap-3 mt-2">
-                <Button type="button" variant="ghost" onClick={() => setStep(1)}>Back</Button>
-                <Button type="submit" isLoading={loading} className="flex-1">Save & Continue →</Button>
-              </div>
-            </form>
-          )}
-
-          {/* Step 3: Upload Salary Slip */}
-          {step === 3 && (
-            <form onSubmit={handleUpload} className="flex flex-col gap-4">
-              <h2 className="text-xl font-bold text-gray-900 mb-1">Upload Salary Slip</h2>
-              <p className="text-sm text-gray-500">PDF, JPG, or PNG · Max 5 MB</p>
-              {uploadError && <div className="rounded-md bg-red-50 border border-red-200 p-3 text-sm text-red-700">{uploadError}</div>}
-
-              <div
-                className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-emerald-400 transition-colors"
-                onClick={() => fileInputRef.current?.click()}
-              >
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  className="hidden"
-                  accept=".pdf,.jpg,.jpeg,.png"
-                  onChange={(e) => {
-                    const f = e.target.files?.[0];
-                    if (f) setSalarySlipFile(f);
-                  }}
-                />
-                {salarySlipFile ? (
-                  <div className="text-sm text-green-700 font-medium">✓ {salarySlipFile.name}</div>
-                ) : (
-                  <div className="text-sm text-gray-500">Click to select file</div>
+                {idx < steps.length - 1 && (
+                  <div className={`h-[1px] flex-1 mb-5 transition-all ${step > s.n ? 'bg-emerald-500' : 'bg-neutral-800'}`} />
                 )}
               </div>
+            ))}
+          </div>
 
-              <div className="flex gap-3 mt-2">
-                <Button type="button" variant="ghost" onClick={() => setStep(2)}>Back</Button>
-                <Button type="submit" isLoading={loading} className="flex-1">Upload & Continue →</Button>
-              </div>
-            </form>
-          )}
+          <div className="relative w-full bg-neutral-900/60 border border-white/10 p-8 rounded-2xl shadow-2xl overflow-hidden backdrop-blur-xl">
+            <BorderBeam />
 
-          {/* Step 4: Configure Loan */}
-          {step === 4 && (
-            <form onSubmit={handleApply} className="flex flex-col gap-4">
-              <h2 className="text-xl font-bold text-gray-900 mb-1">Configure Your Loan</h2>
-
-              {error && <div className="rounded-md bg-red-50 border border-red-200 p-3 text-sm text-red-700">{error}</div>}
-              {breErrors.length > 0 && (
-                <div className="rounded-md bg-red-50 border border-red-200 p-3">
-                  <p className="text-sm font-semibold text-red-700 mb-1">Eligibility check failed:</p>
-                  <ul className="list-disc list-inside text-sm text-red-600 space-y-1">
-                    {breErrors.map((e, i) => <li key={i}>{e}</li>)}
-                  </ul>
-                </div>
-              )}
-
+            {/* Step 1: Account (already done via signup, just show and proceed) */}
+            {step === 1 && (
               <div>
-                <label className="text-sm font-medium text-gray-700">Loan Amount: {formatCurrency(Number(loanAmount))}</label>
-                <input
-                  type="range"
-                  min={50000}
-                  max={500000}
-                  step={10000}
-                  value={loanAmount}
-                  onChange={(e) => setLoanAmount(e.target.value)}
-                  className="w-full mt-2 accent-emerald-600"
+                <h2 className="text-2xl font-bold text-white mb-2 tracking-tight">Account Created</h2>
+                <p className="text-sm text-neutral-400 mb-6">You&apos;re logged in as <strong className="text-emerald-400">{user?.email}</strong>. Let&apos;s complete your profile.</p>
+                <Button
+                  onClick={() => setStep(2)}
+                  size="lg"
+                  className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 rounded-xl transition-all shadow-lg shadow-emerald-600/20"
+                >
+                  Continue to Profile →
+                </Button>
+              </div>
+            )}
+
+            {/* Step 2: Personal Details */}
+            {step === 2 && (
+              <form onSubmit={handleProfileSave} className="flex flex-col gap-4">
+                <h2 className="text-2xl font-bold text-white mb-1 tracking-tight">Personal Details</h2>
+                {error && <div className="rounded-xl bg-rose-500/10 border border-rose-500/20 p-4 text-sm text-rose-400">{error}</div>}
+                <Input label="Full Name" value={fullName} onChange={(e) => setFullName(e.target.value)} required />
+                <Input label="PAN" value={pan} onChange={(e) => setPan(e.target.value.toUpperCase())} placeholder="ABCDE1234F" required maxLength={10} />
+                <Input label="Date of Birth" type="date" value={dob} onChange={(e) => setDob(e.target.value)} required />
+                <Input label="Monthly Salary (₹)" type="number" value={monthlySalary} onChange={(e) => setMonthlySalary(e.target.value)} min={0} required />
+                <Select
+                  label="Employment Mode"
+                  value={employmentMode}
+                  onChange={(e) => setEmploymentMode(e.target.value as EmploymentMode)}
+                  options={[
+                    { value: 'Salaried', label: 'Salaried' },
+                    { value: 'Self-Employed', label: 'Self-Employed' },
+                    { value: 'Unemployed', label: 'Unemployed' },
+                  ]}
+                  required
                 />
-                <div className="flex justify-between text-xs text-gray-400 mt-1">
-                  <span>₹50,000</span><span>₹5,00,000</span>
+                <div className="flex gap-3 mt-4 border-t border-white/5 pt-4">
+                  <Button type="button" variant="ghost" onClick={() => setStep(1)} className="text-neutral-400 hover:text-white">Back</Button>
+                  <Button type="submit" isLoading={loading} className="flex-1 bg-emerald-600 hover:bg-emerald-700 shadow-lg shadow-emerald-600/20">Save & Continue →</Button>
                 </div>
-              </div>
+              </form>
+            )}
 
-              <div>
-                <label className="text-sm font-medium text-gray-700">Tenure: {tenureDays} days</label>
-                <input
-                  type="range"
-                  min={30}
-                  max={365}
-                  step={1}
-                  value={tenureDays}
-                  onChange={(e) => setTenureDays(e.target.value)}
-                  className="w-full mt-2 accent-emerald-600"
-                />
-                <div className="flex justify-between text-xs text-gray-400 mt-1">
-                  <span>30 days</span><span>365 days</span>
-                </div>
-              </div>
+            {/* Step 3: Upload Salary Slip */}
+            {step === 3 && (
+              <form onSubmit={handleUpload} className="flex flex-col gap-4">
+                <h2 className="text-2xl font-bold text-white mb-1 tracking-tight">Upload Salary Slip</h2>
+                <p className="text-sm text-neutral-400">PDF, JPG, or PNG · Max 5 MB</p>
+                {uploadError && <div className="rounded-xl bg-rose-500/10 border border-rose-500/20 p-4 text-sm text-rose-400">{uploadError}</div>}
 
-              {/* Loan preview — Number Ticker */}
-              <div className="bg-gradient-to-br from-indigo-50 to-cyan-50 border border-indigo-100 rounded-xl p-4 grid grid-cols-3 gap-3 text-center shadow-inner">
-                <div>
-                  <p className="text-xs font-medium text-indigo-500 mb-1">Interest Rate</p>
-                  <p className="font-bold text-indigo-900 text-lg">12% p.a.</p>
+                <div
+                  className="border-2 border-dashed border-white/10 rounded-xl p-8 text-center cursor-pointer hover:border-emerald-500/50 hover:bg-white/5 transition-all"
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    className="hidden"
+                    accept=".pdf,.jpg,.jpeg,.png"
+                    onChange={(e) => {
+                      const f = e.target.files?.[0];
+                      if (f) setSalarySlipFile(f);
+                    }}
+                  />
+                  {salarySlipFile ? (
+                    <div className="text-sm text-emerald-400 font-medium flex items-center justify-center gap-2">
+                      <span>✓</span>
+                      <span>{salarySlipFile.name}</span>
+                    </div>
+                  ) : (
+                    <div className="text-sm text-neutral-500 flex flex-col items-center gap-2">
+                      <svg className="w-8 h-8 text-neutral-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                      </svg>
+                      <span>Click to select file or drag here</span>
+                    </div>
+                  )}
                 </div>
-                <div>
-                  <p className="text-xs font-medium text-indigo-500 mb-1">Interest (₹)</p>
-                  <p className="font-bold text-indigo-900 text-lg">
-                    <NumberTicker
-                      key={preview.si}
-                      value={preview.si}
-                      decimalPlaces={0}
-                      className="text-indigo-900"
-                    />
-                  </p>
-                </div>
-                <div>
-                  <p className="text-xs font-medium text-cyan-600 mb-1">Total Repayment (₹)</p>
-                  <p className="font-bold text-cyan-900 text-lg">
-                    <NumberTicker
-                      key={preview.total}
-                      value={preview.total}
-                      decimalPlaces={0}
-                      className="text-cyan-900"
-                    />
-                  </p>
-                </div>
-              </div>
 
-              <div className="flex gap-3 mt-2">
-                <Button type="button" variant="ghost" onClick={() => setStep(3)}>Back</Button>
-                <Button type="submit" isLoading={loading} className="flex-1">Submit Application →</Button>
-              </div>
-            </form>
-          )}
+                <div className="flex gap-3 mt-4 border-t border-white/5 pt-4">
+                  <Button type="button" variant="ghost" onClick={() => setStep(2)} className="text-neutral-400 hover:text-white">Back</Button>
+                  <Button type="submit" isLoading={loading} className="flex-1 bg-emerald-600 hover:bg-emerald-700 shadow-lg shadow-emerald-600/20">Upload & Continue →</Button>
+                </div>
+              </form>
+            )}
+
+            {/* Step 4: Configure Loan */}
+            {step === 4 && (
+              <form onSubmit={handleApply} className="flex flex-col gap-4">
+                <h2 className="text-2xl font-bold text-white mb-1 tracking-tight">Configure Your Loan</h2>
+
+                {error && <div className="rounded-xl bg-rose-500/10 border border-rose-500/20 p-4 text-sm text-rose-400">{error}</div>}
+                {breErrors.length > 0 && (
+                  <div className="rounded-xl bg-rose-500/10 border border-rose-500/20 p-4">
+                    <p className="text-sm font-semibold text-rose-400 mb-2">Eligibility check failed:</p>
+                    <ul className="list-disc list-inside text-sm text-rose-300 space-y-1">
+                      {breErrors.map((e, i) => <li key={i}>{e}</li>)}
+                    </ul>
+                  </div>
+                )}
+
+                <div className="flex flex-col gap-2">
+                  <label className="text-sm font-medium text-neutral-300">Loan Amount: <span className="text-emerald-400 font-bold">{formatCurrency(Number(loanAmount))}</span></label>
+                  <input
+                    type="range"
+                    min={50000}
+                    max={500000}
+                    step={10000}
+                    value={loanAmount}
+                    onChange={(e) => setLoanAmount(e.target.value)}
+                    className="w-full mt-2 accent-emerald-500 cursor-pointer"
+                  />
+                  <div className="flex justify-between text-xs text-neutral-500 mt-1">
+                    <span>₹50,000</span><span>₹5,00,000</span>
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-2">
+                  <label className="text-sm font-medium text-neutral-300">Tenure: <span className="text-emerald-400 font-bold">{tenureDays} days</span></label>
+                  <input
+                    type="range"
+                    min={30}
+                    max={365}
+                    step={1}
+                    value={tenureDays}
+                    onChange={(e) => setTenureDays(e.target.value)}
+                    className="w-full mt-2 accent-emerald-500 cursor-pointer"
+                  />
+                  <div className="flex justify-between text-xs text-neutral-500 mt-1">
+                    <span>30 days</span><span>365 days</span>
+                  </div>
+                </div>
+
+                {/* Loan preview — Number Ticker */}
+                <div className="bg-gradient-to-br from-emerald-500/5 to-teal-500/5 border border-emerald-500/10 rounded-xl p-4 grid grid-cols-3 gap-3 text-center shadow-inner mt-2">
+                  <div>
+                    <p className="text-xs font-semibold text-emerald-400/70 mb-1 uppercase tracking-wider">Interest Rate</p>
+                    <p className="font-bold text-white text-lg">12% p.a.</p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold text-emerald-400/70 mb-1 uppercase tracking-wider">Interest (₹)</p>
+                    <p className="font-bold text-emerald-400 text-lg">
+                      <NumberTicker
+                        key={preview.si}
+                        value={preview.si}
+                        decimalPlaces={0}
+                        className="text-emerald-400"
+                      />
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold text-teal-400/70 mb-1 uppercase tracking-wider">Repayment (₹)</p>
+                    <p className="font-bold text-teal-400 text-lg">
+                      <NumberTicker
+                        key={preview.total}
+                        value={preview.total}
+                        decimalPlaces={0}
+                        className="text-teal-400"
+                      />
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex gap-3 mt-4 border-t border-white/5 pt-4">
+                  <Button type="button" variant="ghost" onClick={() => setStep(3)} className="text-neutral-400 hover:text-white">Back</Button>
+                  <Button type="submit" isLoading={loading} className="flex-1 bg-emerald-600 hover:bg-emerald-700 shadow-lg shadow-emerald-600/20">Submit Application →</Button>
+                </div>
+              </form>
+            )}
+          </div>
         </div>
       </div>
-    </div>
+    </BackgroundBeamsWithCollision>
   );
 }

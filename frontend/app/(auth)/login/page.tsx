@@ -52,103 +52,120 @@ export default function LoginPage() {
 
   return (
     <BackgroundBeamsWithCollision className="flex items-center justify-center px-4 py-16">
-      <div className="w-full max-w-md space-y-4">
+      <div className="w-full max-w-4xl space-y-8">
 
         {/* Header */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-4 py-1.5 mb-4">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-xs font-medium text-emerald-300 tracking-wide">Loan Management System</span>
-          </div>
-          <h1 className="text-3xl font-bold text-white">Welcome back</h1>
-          <p className="text-neutral-400 text-sm mt-1">Sign in to your account to continue</p>
+        <div className="text-center space-y-3">
+          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-white select-none">
+            Loan Management System
+          </h1>
+          <p className="text-neutral-400 text-sm max-w-md mx-auto font-medium">
+            A premium, unified portal for end-to-end loan lifecycles
+          </p>
         </div>
 
-        {/* Login Card */}
-        <div className="relative rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 p-8 shadow-2xl">
-          <BorderBeam
-            size={300}
-            duration={12}
-            colorFrom="#10b981"
-            colorTo="#0ea5e9"
-          />
+        <div className="flex flex-col md:flex-row gap-6 items-stretch justify-center">
+          {/* Login Card */}
+          <div className="relative flex-1 max-w-md w-full rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 p-8 shadow-2xl flex flex-col justify-between">
+            <BorderBeam
+              size={300}
+              duration={12}
+              colorFrom="#10b981"
+              colorTo="#0ea5e9"
+            />
 
-          {error && (
-            <div className="mb-4 rounded-lg bg-red-500/10 border border-red-500/20 px-4 py-3 text-sm text-red-400">
-              {error}
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            {/* Custom dark inputs */}
-            <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-medium text-neutral-300">Email</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
-                required
-                autoComplete="email"
-                className="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-2.5 text-sm text-white placeholder:text-neutral-500 outline-none focus:border-emerald-500/50 focus:ring-2 focus:ring-emerald-500/20 transition-all"
-              />
-            </div>
-
-            <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-medium text-neutral-300">Password</label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                required
-                autoComplete="current-password"
-                className="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-2.5 text-sm text-white placeholder:text-neutral-500 outline-none focus:border-emerald-500/50 focus:ring-2 focus:ring-emerald-500/20 transition-all"
-              />
-            </div>
-
-            <ShimmerButton
-              type="submit"
-              disabled={loading}
-              className="mt-2 h-11 text-sm rounded-xl"
-              background="rgba(16, 185, 129, 1)"
-            >
-              {loading ? (
-                <span className="flex items-center gap-2">
-                  <span className="h-4 w-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
-                  Signing in…
-                </span>
-              ) : (
-                'Sign in →'
+            <div>
+              {error && (
+                <div className="mb-4 rounded-lg bg-red-500/10 border border-red-500/20 px-4 py-3 text-sm text-red-400">
+                  {error}
+                </div>
               )}
-            </ShimmerButton>
-          </form>
 
-          <p className="mt-5 text-center text-sm text-neutral-500">
-            New borrower?{' '}
-            <Link href="/signup" className="text-emerald-400 hover:text-emerald-300 font-medium transition-colors">
-              Create account
-            </Link>
-          </p>
-        </div>
+              <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                {/* Custom dark inputs */}
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-sm font-medium text-neutral-300">Email</label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="you@example.com"
+                    required
+                    autoComplete="email"
+                    className="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-2.5 text-sm text-white placeholder:text-neutral-500 outline-none focus:border-emerald-500/50 focus:ring-2 focus:ring-emerald-500/20 transition-all"
+                  />
+                </div>
 
-        {/* Demo accounts */}
-        <div className="rounded-2xl bg-white/3 border border-white/8 p-4 backdrop-blur-sm">
-          <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-3">
-            Demo Accounts
-          </p>
-          <div className="grid grid-cols-2 gap-1.5">
-            {DEMO_ACCOUNTS.map(({ role, email: em, password: pw }) => (
-              <button
-                key={em}
-                type="button"
-                onClick={() => { setEmail(em); setPassword(pw); }}
-                className="text-left rounded-lg px-3 py-2 text-xs transition-all hover:bg-white/10 border border-transparent hover:border-white/10 group"
-              >
-                <span className="block font-semibold text-emerald-400 group-hover:text-emerald-300">{role}</span>
-                <span className="block text-neutral-500 truncate group-hover:text-neutral-400">{em}</span>
-              </button>
-            ))}
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-sm font-medium text-neutral-300">Password</label>
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    required
+                    autoComplete="current-password"
+                    className="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-2.5 text-sm text-white placeholder:text-neutral-500 outline-none focus:border-emerald-500/50 focus:ring-2 focus:ring-emerald-500/20 transition-all"
+                  />
+                </div>
+
+                <ShimmerButton
+                  type="submit"
+                  disabled={loading}
+                  className="mt-2 h-11 text-sm rounded-xl"
+                  background="rgba(16, 185, 129, 1)"
+                >
+                  {loading ? (
+                    <span className="flex items-center gap-2">
+                      <span className="h-4 w-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+                      Signing in…
+                    </span>
+                  ) : (
+                    'Sign in →'
+                  )}
+                </ShimmerButton>
+              </form>
+            </div>
+
+            <p className="mt-5 text-center text-sm text-neutral-500">
+              New borrower?{' '}
+              <Link href="/signup" className="text-emerald-400 hover:text-emerald-300 font-medium transition-colors">
+                Create account
+              </Link>
+            </p>
+          </div>
+
+          {/* Demo accounts */}
+          <div className="relative flex-1 max-w-md w-full rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 p-8 shadow-2xl flex flex-col justify-between">
+            <BorderBeam
+              size={300}
+              duration={12}
+              delay={6}
+              colorFrom="#0ea5e9"
+              colorTo="#10b981"
+            />
+            <div>
+              <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-4">
+                Demo Accounts
+              </p>
+              <div className="grid grid-cols-2 gap-3">
+                {DEMO_ACCOUNTS.map(({ role, email: em, password: pw }) => (
+                  <button
+                    key={em}
+                    type="button"
+                    onClick={() => { setEmail(em); setPassword(pw); }}
+                    className="text-left rounded-xl p-3 text-xs transition-all hover:bg-white/10 border border-white/5 hover:border-white/20 bg-white/5 group"
+                  >
+                    <span className="block font-semibold text-emerald-400 group-hover:text-emerald-300 mb-1">{role}</span>
+                    <span className="block text-neutral-400 truncate group-hover:text-neutral-300">{em}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+            
+            <p className="mt-5 text-center text-xs text-neutral-500">
+              Click any demo account to auto-fill credentials.
+            </p>
           </div>
         </div>
 

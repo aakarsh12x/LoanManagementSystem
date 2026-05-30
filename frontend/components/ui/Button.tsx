@@ -10,10 +10,10 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variantClasses = {
-  primary: 'bg-emerald-600 hover:bg-emerald-700 text-white disabled:bg-emerald-400',
-  secondary: 'bg-gray-100 hover:bg-gray-200 text-gray-800 border border-gray-300',
-  danger: 'bg-red-600 hover:bg-red-700 text-white disabled:bg-red-400',
-  ghost: 'bg-transparent hover:bg-gray-100 text-gray-700 border border-gray-300',
+  primary: 'bg-emerald-600 hover:bg-emerald-700 text-white disabled:bg-emerald-500/50',
+  secondary: 'bg-neutral-800 hover:bg-neutral-700 text-white border border-white/10 disabled:bg-neutral-900 disabled:text-neutral-500',
+  danger: 'bg-red-600 hover:bg-red-700 text-white disabled:bg-red-500/50',
+  ghost: 'bg-transparent hover:bg-white/5 text-neutral-300 hover:text-white border border-white/10 disabled:opacity-50',
 };
 
 const sizeClasses = {

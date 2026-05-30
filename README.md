@@ -111,12 +111,81 @@ Total Repayment = P + SI
 
 ---
 
-## Loan Lifecycle
+## System Diagrams
 
+### 1. System Architecture
+```mermaid
+graph TD
+    Client[User Browser / Client]
+    Frontend[Frontend - Next.js on Vercel]
+    Backend[Backend - Express.js on Render]
+    Database[(Database - MongoDB Atlas)]
+
+    Client -->|Interacts / Navigates| Frontend
+    Frontend -->|REST API Requests| Backend
+    Backend -->|Data Sync / Mongoose| Database
 ```
-APPLIED → SANCTIONED → DISBURSED → CLOSED (auto)
-        ↘ REJECTED
+
+### 2. Loan Lifecycle State Transitions
+```mermaid
+stateDiagram-v2
+    [*] --> APPLIED : Borrower Submits Application (runs BRE)
+    APPLIED --> SANCTIONED : Sanction Officer Approves
+    APPLIED --> REJECTED : Sanction Officer Rejects
+    SANCTIONED --> DISBURSED : Disbursement Officer Marks Disbursed
+    DISBURSED --> CLOSED : Repayments Complete
+    REJECTED --> [*]
+    CLOSED --> [*]
 ```
+
+### 3. End-to-End Guided Operations Pipeline
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Sales as Sales Officer
+    actor Borrower as Borrower
+    actor Underwriter as Sanction Officer
+    actor Ops as Disbursement Officer
+    actor Coll as Collection Officer
+
+    Sales->>Borrower: 1. Register Account (Leads module)
+    Note over Sales: Popup guides Sales to copy credentials
+    Borrower->>Borrower: 2. Log in & Complete Profile (DOB, PAN, Salary)
+    Borrower->>Borrower: 3. Upload Salary Slip & Apply (Runs BRE)
+    Underwriter->>Borrower: 4. Approve Application (Sanction Queue)
+    Note over Underwriter: Popup guides Underwriter to check Disbursement
+    Ops->>Borrower: 5. Disburse Funds (Disbursement module)
+    Note over Ops: Popup guides Ops to track Collections
+    Coll->>Borrower: 6. Record Repayment (Collection module)
+    Note over Coll: Popup guides user when loan closes
+```
+
+---
+
+## Cloud Deployment (Production)
+
+This project is fully ready for deployment on modern cloud platforms.
+
+### 1. Database (MongoDB Atlas)
+1. Sign up/log in to [MongoDB Atlas](https://www.mongodb.com/cloud/atlas).
+2. Provision a **M0 Free Cluster**.
+3. Under **Network Access**, add `0.0.0.0/0` to allow database access from Render.
+4. Under **Database Access**, create a user and copy the connection string. Replace `<username>` and `<password>` inside the connection URL.
+
+### 2. Backend (Render)
+* **Build Command**: `npm install && npm run build`
+* **Start Command**: `npm run start`
+* **Required Environment Variables**:
+  * `MONGO_URI`: Your MongoDB Atlas connection link.
+  * `PORT`: `10000` (Render's default port).
+  * `JWT_SECRET`: A secure key for signing web tokens.
+  * `FRONTEND_URL`: URL of your deployed Vercel frontend.
+
+### 3. Frontend (Vercel)
+* **Build Command**: `npm run build`
+* **Output Directory**: `.next`
+* **Required Environment Variables**:
+  * `NEXT_PUBLIC_API_URL`: The URL of your deployed Render backend API.
 
 ---
 

@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../../lib/auth-context';
@@ -7,6 +7,7 @@ import { dashboardApi } from '../../../lib/api';
 import { LoanApplication, User } from '../../../types';
 import { StatusBadge } from '../../../components/ui/StatusBadge';
 import { Button } from '../../../components/ui/Button';
+import { BorderBeam } from '../../../components/ui/magic/border-beam';
 
 function formatCurrency(n: number) {
   return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(n);
@@ -22,6 +23,12 @@ export default function SanctionPage() {
   const [rejectModal, setRejectModal] = useState<{ id: string } | null>(null);
   const [rejectReason, setRejectReason] = useState('');
   const [rejectError, setRejectError] = useState('');
+  const [successGuidance, setSuccessGuidance] = useState<{
+    title: string;
+    description: string;
+    actionText: string;
+    actionPath: string;
+  } | null>(null);
 
   useEffect(() => {
     if (!user) return;
@@ -45,8 +52,14 @@ export default function SanctionPage() {
     try {
       await dashboardApi.sanctionAction(id, { action: 'approve' });
       loadData();
+      setSuccessGuidance({
+        title: "Application Approved!",
+        description: "The loan application has been approved and moved to the Disbursement Phase. You can now disburse the funds.",
+        actionText: "Go to Disbursement",
+        actionPath: "/dashboard/disbursement",
+      });
     } catch (e: unknown) {
-      alert((e as Error).message);
+      setError((e as Error).message);
     } finally {
       setActionLoading(null);
     }
@@ -61,6 +74,12 @@ export default function SanctionPage() {
       setRejectModal(null);
       setRejectReason('');
       loadData();
+      setSuccessGuidance({
+        title: "Application Rejected",
+        description: "The loan application has been marked as rejected.",
+        actionText: "Back to Leads",
+        actionPath: "/dashboard/sales",
+      });
     } catch (e: unknown) {
       setRejectError((e as Error).message);
     } finally {
@@ -77,17 +96,17 @@ export default function SanctionPage() {
         <p className="text-sm text-neutral-400 mt-1">Review and approve or reject loan applications</p>
       </div>
 
-      {error && <div className="rounded-md bg-red-50 border border-red-200 p-3 text-sm text-red-700 mb-4">{error}</div>}
+      {error && <div className="rounded-xl bg-red-500/10 border border-red-500/20 p-4 text-sm text-red-400 mb-4">{error}</div>}
 
       {loans.length === 0 ? (
         <div className="bg-neutral-900 rounded-xl border border-white/10 p-12 text-center">
-          <p className="text-gray-500 text-sm">No applications pending sanction.</p>
+          <p className="text-neutral-400 text-sm">No applications pending sanction.</p>
         </div>
       ) : (
         <div className="bg-neutral-900 rounded-xl border border-white/10 shadow-2xl overflow-hidden">
           <div className="px-6 py-4 border-b border-white/10 flex items-center justify-between">
             <span className="text-sm font-medium text-neutral-300">Pending Applications</span>
-            <span className="text-sm font-bold text-blue-600">{loans.length}</span>
+            <span className="text-sm font-bold text-blue-400">{loans.length}</span>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
@@ -110,13 +129,13 @@ export default function SanctionPage() {
                       <td className="px-6 py-4">
                         <div className="font-medium text-white">{b.fullName}</div>
                         <div className="text-xs text-neutral-400">{b.email}</div>
-                        <div className="text-xs text-gray-400">{b.employmentMode} Â· {b.pan}</div>
+                        <div className="text-xs text-neutral-400">{b.employmentMode} • {b.pan}</div>
                       </td>
                       <td className="px-6 py-4 font-medium">{formatCurrency(loan.loanAmount)}</td>
                       <td className="px-6 py-4">{loan.tenureDays} days</td>
                       <td className="px-6 py-4">{formatCurrency(loan.totalRepayment)}</td>
                       <td className="px-6 py-4"><StatusBadge status={loan.status} /></td>
-                      <td className="px-6 py-4 text-neutral-400">{new Date(loan.createdAt).toLocaleDateString('en-IN')}</td>
+                      <td className="px-6 py-4 text-neutral-400" suppressHydrationWarning>{new Date(loan.createdAt).toLocaleDateString('en-IN')}</td>
                       <td className="px-6 py-4">
                         <div className="flex gap-2">
                           <Button
@@ -146,19 +165,31 @@ export default function SanctionPage() {
 
       {/* Reject Modal */}
       {rejectModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
-          <div className="bg-white rounded-xl shadow-xl p-6 w-full max-w-md">
-            <h2 className="text-lg font-bold text-gray-900 mb-2">Reject Application</h2>
-            <p className="text-sm text-gray-500 mb-4">Please provide a reason for rejection.</p>
-            {rejectError && <div className="mb-3 text-sm text-red-600">{rejectError}</div>}
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 px-4 backdrop-blur-sm">
+          <div className="relative bg-neutral-900 border border-white/10 rounded-2xl shadow-2xl p-8 w-full max-w-md overflow-hidden">
+            <BorderBeam
+              size={250}
+              duration={8}
+              colorFrom="#ef4444"
+              colorTo="#f97316"
+            />
+            <div className="mb-6">
+              <h2 className="text-xl font-bold text-white tracking-tight">Reject Application</h2>
+              <p className="text-sm text-neutral-400 mt-1">Please provide a reason for rejection.</p>
+            </div>
+            {rejectError && (
+              <div className="mb-4 rounded-xl bg-red-500/10 border border-red-500/20 px-4 py-3 text-sm text-red-400">
+                {rejectError}
+              </div>
+            )}
             <textarea
               value={rejectReason}
               onChange={(e) => setRejectReason(e.target.value)}
               placeholder="Enter rejection reason..."
-              className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 resize-none"
+              className="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-sm text-white placeholder:text-neutral-500 outline-none focus:border-red-500/50 focus:ring-2 focus:ring-red-500/20 transition-all font-sans resize-none"
               rows={3}
             />
-            <div className="flex gap-3 mt-4">
+            <div className="flex gap-3 mt-6 border-t border-white/5 pt-4">
               <Button variant="ghost" onClick={() => setRejectModal(null)} className="flex-1">Cancel</Button>
               <Button
                 variant="danger"
@@ -167,6 +198,50 @@ export default function SanctionPage() {
                 className="flex-1"
               >
                 Reject
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Success Guidance Modal */}
+      {successGuidance && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 px-4 backdrop-blur-sm">
+          <div className="relative bg-neutral-900 border border-white/10 rounded-2xl shadow-2xl p-8 w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <BorderBeam
+              size={250}
+              duration={8}
+              colorFrom="#10b981"
+              colorTo="#06b6d4"
+            />
+            <div className="mb-6 text-center">
+              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500/20 border border-emerald-500/30 mb-4">
+                <svg className="h-6 w-6 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <h2 className="text-xl font-bold text-white tracking-tight">{successGuidance.title}</h2>
+              <p className="text-sm text-neutral-400 mt-2">
+                {successGuidance.description}
+              </p>
+            </div>
+            <div className="flex flex-col gap-2 mt-6 border-t border-white/5 pt-4">
+              <Button
+                variant="primary"
+                onClick={() => {
+                  router.push(successGuidance.actionPath);
+                  setSuccessGuidance(null);
+                }}
+                className="w-full bg-emerald-600 hover:bg-emerald-700"
+              >
+                {successGuidance.actionText}
+              </Button>
+              <Button
+                variant="ghost"
+                onClick={() => setSuccessGuidance(null)}
+                className="w-full"
+              >
+                Dismiss
               </Button>
             </div>
           </div>
