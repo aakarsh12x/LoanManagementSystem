@@ -1,6 +1,7 @@
 # Loan Management System (LMS)
 
 A full-stack Loan Management System with a Borrower Portal and an Internal Operations Dashboard, built with Next.js, Express, TypeScript, and MongoDB.
+<img width="1919" height="912" alt="image" src="https://github.com/user-attachments/assets/e65d29ad-aba4-4375-9d36-cb8a0940eef8" />
 
 ## Tech Stack
 
