@@ -32,18 +32,6 @@ app.use('/api/dashboard', dashboardRoutes);
 // Health check
 app.get('/health', (_req, res) => res.json({ status: 'ok' }));
 
-// Temporary debug: show which DB is connected and user count
-app.get('/debug/db', async (_req, res) => {
-  try {
-    const mongoose = await import('mongoose');
-    const dbName = mongoose.default.connection.db?.databaseName ?? 'unknown';
-    const userCount = await mongoose.default.connection.db?.collection('users').countDocuments();
-    res.json({ dbName, userCount });
-  } catch (e) {
-    res.json({ error: String(e) });
-  }
-});
-
 // Error handler (must be last)
 app.use(errorHandler);
 
