@@ -7,6 +7,7 @@ import authRoutes from './routes/auth';
 import borrowerRoutes from './routes/borrower';
 import dashboardRoutes from './routes/dashboard';
 import { errorHandler } from './middleware/errorHandler';
+import { startKeepAlive } from './services/keepAlive';
 
 const app = express();
 
@@ -41,6 +42,8 @@ connectDB()
   .then(() => {
     app.listen(PORT, () => {
       console.log(`Server running on http://localhost:${PORT}`);
+      // Start smart keep-alive cron (active 9 AM – 11 PM IST only)
+      startKeepAlive();
     });
   })
   .catch((err) => {
