@@ -1,1 +1,34 @@
 @import "tailwindcss";
+
+/* ─── Border Beam ─────────────────────────────────────────── */
+@keyframes border-beam {
+  100% {
+    offset-distance: 100%;
+  }
+}
+
+/* ─── Shimmer Button ──────────────────────────────────────── */
+@keyframes shimmer-slide {
+  to {
+    transform: translate(calc(100cqw - 100%), 0);
+  }
+}
+
+@keyframes spin-around {
+  0%   { transform: translateZ(0) rotate(0);   }
+  15%  { transform: translateZ(0) rotate(270deg); }
+  35%  { transform: translateZ(0) rotate(270deg); }
+  51%  { transform: translateZ(0) rotate(540deg); }
+  70%  { transform: translateZ(0) rotate(540deg); }
+  85%  { transform: translateZ(0) rotate(810deg); }
+  100% { transform: translateZ(0) rotate(1080deg); }
+}
+
+/* Tailwind v4 animation utilities */
+@utility animate-shimmer-slide {
+  animation: shimmer-slide var(--speed, 3s) ease-in-out infinite alternate;
+}
+
+@utility animate-spin-around {
+  animation: spin-around calc(var(--speed, 3s) * 2) infinite linear;
+}

@@ -8,6 +8,7 @@ import { Input } from '../../components/ui/Input';
 import { Select } from '../../components/ui/Select';
 import { Button } from '../../components/ui/Button';
 import { StatusBadge } from '../../components/ui/StatusBadge';
+import { NumberTicker } from '../../components/ui/magic/number-ticker';
 import { LoanApplication, EmploymentMode } from '../../types';
 
 type Step = 1 | 2 | 3 | 4;
@@ -359,19 +360,33 @@ export default function ApplyPage() {
                 </div>
               </div>
 
-              {/* Loan preview */}
-              <div className="bg-blue-50 rounded-lg p-4 grid grid-cols-3 gap-3 text-center">
+              {/* Loan preview — Number Ticker */}
+              <div className="bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-100 rounded-xl p-4 grid grid-cols-3 gap-3 text-center shadow-inner">
                 <div>
-                  <p className="text-xs text-blue-500">Interest Rate</p>
-                  <p className="font-semibold text-blue-900">12% p.a.</p>
+                  <p className="text-xs font-medium text-indigo-500 mb-1">Interest Rate</p>
+                  <p className="font-bold text-indigo-900 text-lg">12% p.a.</p>
                 </div>
                 <div>
-                  <p className="text-xs text-blue-500">Interest</p>
-                  <p className="font-semibold text-blue-900">{formatCurrency(preview.si)}</p>
+                  <p className="text-xs font-medium text-indigo-500 mb-1">Interest (₹)</p>
+                  <p className="font-bold text-indigo-900 text-lg">
+                    <NumberTicker
+                      key={preview.si}
+                      value={preview.si}
+                      decimalPlaces={0}
+                      className="text-indigo-900"
+                    />
+                  </p>
                 </div>
                 <div>
-                  <p className="text-xs text-blue-500">Total Repayment</p>
-                  <p className="font-semibold text-blue-900">{formatCurrency(preview.total)}</p>
+                  <p className="text-xs font-medium text-purple-500 mb-1">Total Repayment (₹)</p>
+                  <p className="font-bold text-purple-900 text-lg">
+                    <NumberTicker
+                      key={preview.total}
+                      value={preview.total}
+                      decimalPlaces={0}
+                      className="text-purple-900"
+                    />
+                  </p>
                 </div>
               </div>
 

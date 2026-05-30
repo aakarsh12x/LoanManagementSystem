@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../../lib/auth-context';
@@ -61,7 +61,7 @@ function PaymentModal({
         {error && <div className="mb-3 rounded-md bg-red-50 border border-red-200 p-2 text-sm text-red-700">{error}</div>}
         <form onSubmit={handleSubmit} className="flex flex-col gap-3">
           <Input
-            label="Amount (₹)"
+            label="Amount (â‚¹)"
             type="number"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
@@ -126,14 +126,14 @@ export default function CollectionPage() {
   return (
     <div className="max-w-6xl mx-auto">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Collection Module</h1>
-        <p className="text-sm text-gray-500 mt-1">Track repayments for disbursed loans</p>
+        <h1 className="text-2xl font-bold text-white">Collection Module</h1>
+        <p className="text-sm text-neutral-400 mt-1">Track repayments for disbursed loans</p>
       </div>
 
       {error && <div className="rounded-md bg-red-50 border border-red-200 p-3 text-sm text-red-700 mb-4">{error}</div>}
 
       {loans.length === 0 ? (
-        <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
+        <div className="bg-neutral-900 rounded-xl border border-white/10 p-12 text-center">
           <p className="text-gray-500 text-sm">No disbursed loans yet.</p>
         </div>
       ) : (
@@ -145,37 +145,37 @@ export default function CollectionPage() {
             const isExpanded = expandedLoan === loan._id;
 
             return (
-              <div key={loan._id} className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+              <div key={loan._id} className="bg-neutral-900 rounded-xl border border-white/10 shadow-2xl overflow-hidden">
                 <div className="p-6">
                   <div className="flex items-start justify-between">
                     <div>
                       <div className="flex items-center gap-2">
-                        <h2 className="font-semibold text-gray-900">{b.fullName}</h2>
+                        <h2 className="font-semibold text-white">{b.fullName}</h2>
                         <StatusBadge status={loan.status} />
                       </div>
-                      <p className="text-sm text-gray-500">{b.email}</p>
+                      <p className="text-sm text-neutral-400">{b.email}</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-xs text-gray-500">Disbursed</p>
-                      <p className="text-sm font-medium">{loan.disbursedAt ? new Date(loan.disbursedAt).toLocaleDateString('en-IN') : '—'}</p>
+                      <p className="text-xs text-neutral-400">Disbursed</p>
+                      <p className="text-sm font-medium">{loan.disbursedAt ? new Date(loan.disbursedAt).toLocaleDateString('en-IN') : 'â€”'}</p>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-4 gap-4 mt-4 text-sm">
-                    <div className="bg-gray-50 rounded-lg p-3">
-                      <p className="text-xs text-gray-500">Loan Amount</p>
+                    <div className="bg-white/5 rounded-lg p-3">
+                      <p className="text-xs text-neutral-400">Loan Amount</p>
                       <p className="font-semibold">{formatCurrency(loan.loanAmount)}</p>
                     </div>
-                    <div className="bg-gray-50 rounded-lg p-3">
-                      <p className="text-xs text-gray-500">Total Repayment</p>
+                    <div className="bg-white/5 rounded-lg p-3">
+                      <p className="text-xs text-neutral-400">Total Repayment</p>
                       <p className="font-semibold">{formatCurrency(loan.totalRepayment)}</p>
                     </div>
-                    <div className="bg-green-50 rounded-lg p-3">
-                      <p className="text-xs text-gray-500">Total Paid</p>
+                    <div className="bg-green-500/10 rounded-lg p-3">
+                      <p className="text-xs text-neutral-400">Total Paid</p>
                       <p className="font-semibold text-green-700">{formatCurrency(loan.totalPaid)}</p>
                     </div>
-                    <div className="bg-orange-50 rounded-lg p-3">
-                      <p className="text-xs text-gray-500">Outstanding</p>
+                    <div className="bg-orange-500/10 rounded-lg p-3">
+                      <p className="text-xs text-neutral-400">Outstanding</p>
                       <p className="font-semibold text-orange-700">{formatCurrency(outstanding)}</p>
                     </div>
                   </div>
@@ -212,7 +212,7 @@ export default function CollectionPage() {
 
                 {/* Payments table */}
                 {isExpanded && loan.payments.length > 0 && (
-                  <div className="border-t border-gray-100 px-6 pb-4">
+                  <div className="border-t border-white/10 px-6 pb-4">
                     <table className="w-full text-sm mt-3">
                       <thead className="text-gray-500 text-xs uppercase">
                         <tr>
@@ -221,11 +221,11 @@ export default function CollectionPage() {
                           <th className="text-left py-2">Amount</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-gray-100">
+                      <tbody className="divide-y divide-white/5">
                         {loan.payments.map((p) => (
                           <tr key={p._id}>
                             <td className="py-2 text-gray-600">{new Date(p.paymentDate).toLocaleDateString('en-IN')}</td>
-                            <td className="py-2 font-mono text-gray-700">{p.utr}</td>
+                            <td className="py-2 font-mono text-neutral-300">{p.utr}</td>
                             <td className="py-2 font-medium text-green-700">{formatCurrency(p.amount)}</td>
                           </tr>
                         ))}
@@ -235,7 +235,7 @@ export default function CollectionPage() {
                 )}
 
                 {isExpanded && loan.payments.length === 0 && (
-                  <div className="border-t border-gray-100 px-6 py-4 text-sm text-gray-400 text-center">
+                  <div className="border-t border-white/10 px-6 py-4 text-sm text-gray-400 text-center">
                     No payments recorded yet.
                   </div>
                 )}
@@ -255,3 +255,4 @@ export default function CollectionPage() {
     </div>
   );
 }
+
