@@ -1,4 +1,4 @@
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://loanmanagementsystem-7jh4.onrender.com';
 
 function getToken(): string | null {
   if (typeof window === 'undefined') return null;

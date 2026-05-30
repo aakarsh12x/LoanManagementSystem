@@ -145,8 +145,11 @@ export default function LoginPage() {
               colorTo="#10b981"
             />
             <div>
-              <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-4">
+              <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-1">
                 Demo Accounts
+              </p>
+              <p className="text-xs text-neutral-500 mb-4">
+                Click any role to auto-fill credentials and sign in instantly.
               </p>
               <div className="grid grid-cols-2 gap-3">
                 {DEMO_ACCOUNTS.map(({ role, email: em, password: pw }) => (
