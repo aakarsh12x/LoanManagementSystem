@@ -147,7 +147,7 @@ export default function ApplyPage() {
   if (pageLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-emerald-600 border-t-transparent" />
       </div>
     );
   }
@@ -226,7 +226,7 @@ export default function ApplyPage() {
             <div key={s.n} className="flex items-center flex-1">
               <div className={`flex flex-col items-center ${idx < steps.length - 1 ? 'flex-1' : ''}`}>
                 <div className={`h-8 w-8 rounded-full flex items-center justify-center text-sm font-semibold transition-colors
-                  ${step === s.n ? 'bg-blue-600 text-white' : step > s.n ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-500'}`}>
+                  ${step === s.n ? 'bg-emerald-600 text-white' : step > s.n ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-500'}`}>
                   {step > s.n ? '✓' : s.n}
                 </div>
                 <span className="text-xs text-gray-500 mt-1">{s.label}</span>
@@ -286,7 +286,7 @@ export default function ApplyPage() {
               {uploadError && <div className="rounded-md bg-red-50 border border-red-200 p-3 text-sm text-red-700">{uploadError}</div>}
 
               <div
-                className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-blue-400 transition-colors"
+                className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-emerald-400 transition-colors"
                 onClick={() => fileInputRef.current?.click()}
               >
                 <input
@@ -337,7 +337,7 @@ export default function ApplyPage() {
                   step={10000}
                   value={loanAmount}
                   onChange={(e) => setLoanAmount(e.target.value)}
-                  className="w-full mt-2 accent-blue-600"
+                  className="w-full mt-2 accent-emerald-600"
                 />
                 <div className="flex justify-between text-xs text-gray-400 mt-1">
                   <span>₹50,000</span><span>₹5,00,000</span>
@@ -353,7 +353,7 @@ export default function ApplyPage() {
                   step={1}
                   value={tenureDays}
                   onChange={(e) => setTenureDays(e.target.value)}
-                  className="w-full mt-2 accent-blue-600"
+                  className="w-full mt-2 accent-emerald-600"
                 />
                 <div className="flex justify-between text-xs text-gray-400 mt-1">
                   <span>30 days</span><span>365 days</span>

@@ -80,8 +80,8 @@ export function DashboardNav() {
 
         {/* Brand */}
         <div className="flex items-center gap-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-500/20 border border-indigo-500/30">
-            <svg className="h-4 w-4 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500/20 border border-emerald-500/30">
+            <svg className="h-4 w-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
             </svg>
           </div>
@@ -95,7 +95,7 @@ export function DashboardNav() {
         <div className="flex items-center gap-3">
           <div className="text-right">
             <p className="text-xs font-medium text-white leading-none">{user.fullName}</p>
-            <p className="text-xs text-indigo-400 capitalize mt-0.5">{user.role}</p>
+            <p className="text-xs text-emerald-400 capitalize mt-0.5">{user.role}</p>
           </div>
           <div className="h-8 w-8">
             <IconLogout onClick={handleLogout} />

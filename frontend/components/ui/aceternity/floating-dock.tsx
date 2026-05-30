@@ -84,7 +84,7 @@ function DockIcon({
         className={cn(
           'relative flex items-center justify-center rounded-xl transition-colors duration-200',
           isActive
-            ? 'bg-indigo-500/30 ring-1 ring-indigo-400/50'
+            ? 'bg-emerald-500/30 ring-1 ring-emerald-400/50'
             : 'bg-white/10 hover:bg-white/20',
         )}
       >
@@ -104,7 +104,7 @@ function DockIcon({
 
         {/* Active dot */}
         {isActive && (
-          <span className="absolute -bottom-1.5 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full bg-indigo-400" />
+          <span className="absolute -bottom-1.5 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full bg-emerald-400" />
         )}
 
         <motion.div

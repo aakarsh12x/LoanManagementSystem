@@ -56,9 +56,9 @@ export default function LoginPage() {
 
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-500/10 px-4 py-1.5 mb-4">
-            <span className="h-1.5 w-1.5 rounded-full bg-indigo-400 animate-pulse" />
-            <span className="text-xs font-medium text-indigo-300 tracking-wide">Loan Management System</span>
+          <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-4 py-1.5 mb-4">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="text-xs font-medium text-emerald-300 tracking-wide">Loan Management System</span>
           </div>
           <h1 className="text-3xl font-bold text-white">Welcome back</h1>
           <p className="text-neutral-400 text-sm mt-1">Sign in to your account to continue</p>
@@ -69,8 +69,8 @@ export default function LoginPage() {
           <BorderBeam
             size={300}
             duration={12}
-            colorFrom="#6366f1"
-            colorTo="#a855f7"
+            colorFrom="#10b981"
+            colorTo="#0ea5e9"
           />
 
           {error && (
@@ -90,7 +90,7 @@ export default function LoginPage() {
                 placeholder="you@example.com"
                 required
                 autoComplete="email"
-                className="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-2.5 text-sm text-white placeholder:text-neutral-500 outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-all"
+                className="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-2.5 text-sm text-white placeholder:text-neutral-500 outline-none focus:border-emerald-500/50 focus:ring-2 focus:ring-emerald-500/20 transition-all"
               />
             </div>
 
@@ -103,7 +103,7 @@ export default function LoginPage() {
                 placeholder="••••••••"
                 required
                 autoComplete="current-password"
-                className="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-2.5 text-sm text-white placeholder:text-neutral-500 outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-all"
+                className="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-2.5 text-sm text-white placeholder:text-neutral-500 outline-none focus:border-emerald-500/50 focus:ring-2 focus:ring-emerald-500/20 transition-all"
               />
             </div>
 
@@ -111,7 +111,7 @@ export default function LoginPage() {
               type="submit"
               disabled={loading}
               className="mt-2 h-11 text-sm rounded-xl"
-              background="rgba(79, 70, 229, 1)"
+              background="rgba(16, 185, 129, 1)"
             >
               {loading ? (
                 <span className="flex items-center gap-2">
@@ -126,7 +126,7 @@ export default function LoginPage() {
 
           <p className="mt-5 text-center text-sm text-neutral-500">
             New borrower?{' '}
-            <Link href="/signup" className="text-indigo-400 hover:text-indigo-300 font-medium transition-colors">
+            <Link href="/signup" className="text-emerald-400 hover:text-emerald-300 font-medium transition-colors">
               Create account
             </Link>
           </p>
@@ -145,7 +145,7 @@ export default function LoginPage() {
                 onClick={() => { setEmail(em); setPassword(pw); }}
                 className="text-left rounded-lg px-3 py-2 text-xs transition-all hover:bg-white/10 border border-transparent hover:border-white/10 group"
               >
-                <span className="block font-semibold text-indigo-400 group-hover:text-indigo-300">{role}</span>
+                <span className="block font-semibold text-emerald-400 group-hover:text-emerald-300">{role}</span>
                 <span className="block text-neutral-500 truncate group-hover:text-neutral-400">{em}</span>
               </button>
             ))}
