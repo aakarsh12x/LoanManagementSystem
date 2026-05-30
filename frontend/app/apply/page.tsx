@@ -108,6 +108,14 @@ export default function ApplyPage() {
 
   const handleLogout = () => { logout(); router.push('/login'); };
 
+  // Clear all errors on step navigation
+  const goToStep = (s: Step) => {
+    setError('');
+    setBreErrors([]);
+    setUploadError('');
+    setStep(s);
+  };
+
   // Step 2 → save profile
   const handleProfileSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -121,7 +129,7 @@ export default function ApplyPage() {
         monthlySalary: Number(monthlySalary),
         employmentMode: employmentMode as EmploymentMode,
       });
-      setStep(3);
+      goToStep(3);
     } catch (err: unknown) {
       setError((err as Error).message);
     } finally {
@@ -140,7 +148,7 @@ export default function ApplyPage() {
       fd.append('salarySlip', salarySlipFile);
       const { filePath } = await borrowerApi.uploadSalarySlip(fd);
       setSalarySlipPath(filePath);
-      setStep(4);
+      goToStep(4);
     } catch (err: unknown) {
       setUploadError((err as Error).message);
     } finally {
@@ -307,7 +315,7 @@ export default function ApplyPage() {
                 <h2 className="text-2xl font-bold text-white mb-2 tracking-tight">Account Created</h2>
                 <p className="text-sm text-neutral-400 mb-6">You&apos;re logged in as <strong className="text-emerald-400">{user?.email}</strong>. Let&apos;s complete your profile.</p>
                 <Button
-                  onClick={() => setStep(2)}
+                  onClick={() => goToStep(2)}
                   size="lg"
                   className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 rounded-xl transition-all shadow-lg shadow-emerald-600/20"
                 >
@@ -337,7 +345,7 @@ export default function ApplyPage() {
                   required
                 />
                 <div className="flex gap-3 mt-4 border-t border-white/5 pt-4">
-                  <Button type="button" variant="ghost" onClick={() => setStep(1)} className="text-neutral-400 hover:text-white">Back</Button>
+                  <Button type="button" variant="ghost" onClick={() => goToStep(1)} className="text-neutral-400 hover:text-white">Back</Button>
                   <Button type="submit" isLoading={loading} className="flex-1 bg-emerald-600 hover:bg-emerald-700 shadow-lg shadow-emerald-600/20">Save & Continue →</Button>
                 </div>
               </form>
@@ -380,7 +388,7 @@ export default function ApplyPage() {
                 </div>
 
                 <div className="flex gap-3 mt-4 border-t border-white/5 pt-4">
-                  <Button type="button" variant="ghost" onClick={() => setStep(2)} className="text-neutral-400 hover:text-white">Back</Button>
+                  <Button type="button" variant="ghost" onClick={() => goToStep(2)} className="text-neutral-400 hover:text-white">Back</Button>
                   <Button type="submit" isLoading={loading} className="flex-1 bg-emerald-600 hover:bg-emerald-700 shadow-lg shadow-emerald-600/20">Upload & Continue →</Button>
                 </div>
               </form>
@@ -464,7 +472,7 @@ export default function ApplyPage() {
                 </div>
 
                 <div className="flex gap-3 mt-4 border-t border-white/5 pt-4">
-                  <Button type="button" variant="ghost" onClick={() => setStep(3)} className="text-neutral-400 hover:text-white">Back</Button>
+                  <Button type="button" variant="ghost" onClick={() => goToStep(3)} className="text-neutral-400 hover:text-white">Back</Button>
                   <Button type="submit" isLoading={loading} className="flex-1 bg-emerald-600 hover:bg-emerald-700 shadow-lg shadow-emerald-600/20">Submit Application →</Button>
                 </div>
               </form>
