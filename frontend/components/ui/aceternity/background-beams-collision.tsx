@@ -29,7 +29,7 @@ function Explosion({ x, y }: { x: number; y: number }) {
       {sparks.map((s) => (
         <motion.span
           key={s.id}
-          className="absolute h-1 w-1 rounded-full bg-gradient-to-b from-indigo-400 to-purple-500"
+          className="absolute h-1 w-1 rounded-full bg-gradient-to-b from-indigo-400 to-cyan-500"
           initial={{ x: 0, y: 0, opacity: 1 }}
           animate={{ x: s.dx, y: s.dy, opacity: 0 }}
           transition={{ duration: randomBetween(8, 16) * 0.1, ease: 'easeOut' }}
@@ -118,14 +118,14 @@ function Beam({
 }
 
 const BEAMS = [
-  { xOffset: 80,   duration: 7,  delay: 0,   height: 'h-16', color: '#818cf8' },
-  { xOffset: 200,  duration: 5,  delay: 1.5, height: 'h-10', color: '#a78bfa' },
+  { xOffset: 80,   duration: 7,  delay: 0,   height: 'h-16', color: '#38bdf8' },
+  { xOffset: 200,  duration: 5,  delay: 1.5, height: 'h-10', color: '#0ea5e9' },
   { xOffset: 380,  duration: 9,  delay: 0.5, height: 'h-20', color: '#6366f1' },
-  { xOffset: 550,  duration: 6,  delay: 2,   height: 'h-12', color: '#c084fc' },
-  { xOffset: 720,  duration: 8,  delay: 0,   height: 'h-14', color: '#818cf8' },
-  { xOffset: 900,  duration: 5,  delay: 3,   height: 'h-8',  color: '#a78bfa' },
+  { xOffset: 550,  duration: 6,  delay: 2,   height: 'h-12', color: '#2dd4bf' },
+  { xOffset: 720,  duration: 8,  delay: 0,   height: 'h-14', color: '#38bdf8' },
+  { xOffset: 900,  duration: 5,  delay: 3,   height: 'h-8',  color: '#0ea5e9' },
   { xOffset: 1050, duration: 10, delay: 1,   height: 'h-20', color: '#6366f1' },
-  { xOffset: 1200, duration: 6,  delay: 2.5, height: 'h-12', color: '#c084fc' },
+  { xOffset: 1200, duration: 6,  delay: 2.5, height: 'h-12', color: '#2dd4bf' },
 ];
 
 export function BackgroundBeamsWithCollision({

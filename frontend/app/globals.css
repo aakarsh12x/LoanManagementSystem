@@ -7,6 +7,32 @@
   }
 }
 
+.border-beam {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  border: var(--border-width, 1.5px) solid transparent;
+  
+  /* Masking out the inner card area so only the border is visible */
+  mask: linear-gradient(#000 0 0) padding-box, linear-gradient(#000 0 0);
+  -webkit-mask: linear-gradient(#000 0 0) padding-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  -webkit-mask-composite: xor;
+}
+
+.border-beam::after {
+  content: "";
+  position: absolute;
+  aspect-ratio: 1;
+  width: var(--size, 250px);
+  animation: border-beam var(--duration, 15s) linear infinite;
+  animation-delay: var(--delay, 0s);
+  background: linear-gradient(to left, var(--color-from, #3b82f6), var(--color-to, #06b6d4), transparent);
+  offset-anchor: var(--anchor, 90%) 50%;
+  offset-path: rect(0 100% 100% 0 round inherit);
+}
+
 /* ─── Shimmer Button ──────────────────────────────────────── */
 @keyframes shimmer-slide {
   to {

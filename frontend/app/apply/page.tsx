@@ -361,7 +361,7 @@ export default function ApplyPage() {
               </div>
 
               {/* Loan preview — Number Ticker */}
-              <div className="bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-100 rounded-xl p-4 grid grid-cols-3 gap-3 text-center shadow-inner">
+              <div className="bg-gradient-to-br from-indigo-50 to-cyan-50 border border-indigo-100 rounded-xl p-4 grid grid-cols-3 gap-3 text-center shadow-inner">
                 <div>
                   <p className="text-xs font-medium text-indigo-500 mb-1">Interest Rate</p>
                   <p className="font-bold text-indigo-900 text-lg">12% p.a.</p>
@@ -378,13 +378,13 @@ export default function ApplyPage() {
                   </p>
                 </div>
                 <div>
-                  <p className="text-xs font-medium text-purple-500 mb-1">Total Repayment (₹)</p>
-                  <p className="font-bold text-purple-900 text-lg">
+                  <p className="text-xs font-medium text-cyan-600 mb-1">Total Repayment (₹)</p>
+                  <p className="font-bold text-cyan-900 text-lg">
                     <NumberTicker
                       key={preview.total}
                       value={preview.total}
                       decimalPlaces={0}
-                      className="text-purple-900"
+                      className="text-cyan-900"
                     />
                   </p>
                 </div>
