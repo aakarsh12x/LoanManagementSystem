@@ -1,6 +1,7 @@
 # Loan Management System (LMS)
 
-VIDEO LINK - https://youtu.be/P41htQqQgJ0
+VIDEO LINK - https://drive.google.com/file/d/1xR9yB4yibeRAzp9B97LN7J2Sr4MbcXX3/view?usp=sharing
+
 LIVE LINK - https://loan-management-system-plum.vercel.app/
 
 A full-stack Loan Management System with a Borrower Portal and an Internal Operations Dashboard, built with Next.js, Express, TypeScript, and MongoDB.
